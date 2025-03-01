@@ -4,11 +4,9 @@ import { useEffect, useState } from "react";
 import io from "socket.io-client";
 
 export default function Home() {
-  const [message, setMessage] = useState("Waiting for data...");
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [feedback, setFeedback] = useState("");
-  const [isCorrect, setIsCorrect] = useState(false); // Track if the current answer is correct
-  const [isAnswered, setIsAnswered] = useState(false); // Track if the question has been answered correctly
+  const [isCorrect, setIsCorrect] = useState(false);
 
   const questions = [
     { question: "Where does 'C' go in cat?", correctUID: "92 C8 C5 01", correctReader: "0" },
@@ -20,56 +18,83 @@ export default function Home() {
 
     socket.on("rfidData", (data) => {
       const { reader, uid } = data;
-      setMessage(`Reader ${reader}: UID ${uid}`);
 
-      // Ignore new inputs if the question has already been answered correctly
-      if (isAnswered) return;
+      // Ignore new inputs if the current question is already answered correctly
+      if (isCorrect) return;
 
       // Verify the UID and reader for the current question
       const currentQ = questions[currentQuestion];
       if (uid === currentQ.correctUID && reader === currentQ.correctReader) {
-        setFeedback("✅ Correct! Click 'Next' to proceed.");
+        setFeedback("✅ Correct!");
         setIsCorrect(true);
-        setIsAnswered(true); // Mark the question as answered
       } else {
         setFeedback("❌ Incorrect! Try again.");
-        setIsCorrect(false);
       }
     });
 
     return () => socket.disconnect();
-  }, [currentQuestion, isAnswered]); // Re-run effect when currentQuestion or isAnswered changes
+  }, [currentQuestion, isCorrect]); // Re-run effect when currentQuestion or isCorrect changes
 
   const handleNextQuestion = () => {
     if (isCorrect) {
-      setCurrentQuestion((prev) => prev + 1); // Move to the next question
-      setFeedback(""); // Reset feedback
-      setIsCorrect(false); // Reset correctness state
-      setIsAnswered(false); // Reset answered state
-    } else {
-      setFeedback("Please provide the correct answer before proceeding.");
+      if (currentQuestion + 1 < questions.length) {
+        // Move to the next question
+        setCurrentQuestion((prev) => prev + 1);
+        setFeedback("");
+        setIsCorrect(false);
+      } else {
+        // If it's the last question, show completion message
+        setFeedback("🎉 Congratulations! You've completed the lesson.");
+      }
     }
   };
 
+  const handleHome = () => {
+    // Reset the quiz to the first question
+    setCurrentQuestion(0);
+    setFeedback("");
+    setIsCorrect(false);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex min-h-screen flex-col items-center justify-center p-4">
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
+      <header className="bg-blue-500 p-4 text-white text-center">
         <h1 className="text-2xl font-bold">Learning Kit</h1>
-        <p className="text-lg">{message}</p>
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold">Question {currentQuestion + 1}</h2>
-          <p className="text-lg">{questions[currentQuestion].question}</p>
-          <p className="text-lg">{feedback}</p>
-          {isCorrect && (
-            <button
-              onClick={handleNextQuestion}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Next
-            </button>
-          )}
-        </div>
+      </header>
+
+      {/* Centered Question */}
+      <main className="flex-grow flex flex-col items-center justify-center p-4 text-center">
+        {currentQuestion < questions.length ? (
+          <>
+            <h2 className="text-xl font-semibold">Question {currentQuestion + 1}</h2>
+            <p className="text-lg mt-2">{questions[currentQuestion].question}</p>
+          </>
+        ) : (
+          <h2 className="text-xl font-semibold">Lesson Completed!</h2>
+        )}
       </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-100 p-4 text-center">
+        <p className="text-lg">{feedback}</p>
+        {isCorrect && currentQuestion + 1 < questions.length && (
+          <button
+            onClick={handleNextQuestion}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Next
+          </button>
+        )}
+        {isCorrect && currentQuestion + 1 === questions.length && (
+          <button
+            onClick={handleHome}
+            className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            Home
+          </button>
+        )}
+      </footer>
     </div>
   );
 }
