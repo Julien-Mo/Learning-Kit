@@ -1,0 +1,46 @@
+{
+  "lessons": [
+    {
+      "id": 1,
+      "name": "Basic Alphabet",
+      "content": [
+        {
+          "type": "introduction",
+          "letter": "A",
+          "sound": "aaaaaaahhhhh",
+          "keyword": "Apple",
+          "description": "Teach the letter 'A'. Present the letter, basic sound and keyword: 'A, Apple, \\a'"
+        },
+        {
+          "type": "activity",
+          "activityType": "writing",
+          "instructions": "Trace, then copy the letter. Then cover the letter and write it while saying the name, keyword and sound."
+        },
+        {
+          "type": "wordReading",
+          "title": "Read these words featuring the letter A",
+          "words": ["Bat", "Mat", "Man", "Rat", "Had"]
+        },
+        {
+          "type": "phraseReading",
+          "title": "Read these phrases",
+          "phrases": ["a tan", "ran the ramp", "the grand plan"]
+        },
+        {
+          "type": "sentenceReading",
+          "title": "Read these sentences",
+          "sentences": [
+            "Nan had a cat.",
+            "Fran, grab the crab!",
+            "Sam is a big, fat, rat."
+          ]
+        },
+        {
+          "type": "spelling",
+          "title": "Spell these words featuring the letter A",
+          "words": ["Jam", "Fat", "Sap", "Sad", "Map", "Tab"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,11 @@
 import React from "react";
-
+import DashboardLayout from "@/layouts/dashboard-layout";
 const Profile = () => {
-  return <div>Profile</div>;
+  return (
+    <DashboardLayout>
+      <div className="mx-auto">Profile</div>
+    </DashboardLayout>
+  );
 };
 
 export default Profile;
