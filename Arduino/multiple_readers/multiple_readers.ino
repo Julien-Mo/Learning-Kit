@@ -3,14 +3,14 @@
 
 #define SS_PIN_1 53
 #define SS_PIN_2 49
-#define RST_PIN_1 5
-#define RST_PIN_2 4
+#define RST_PIN 5
 
-MFRC522 rfid1(SS_PIN_1, RST_PIN_1);
-MFRC522 rfid2(SS_PIN_2, RST_PIN_2);
+MFRC522 rfid1(SS_PIN_1, RST_PIN);
+MFRC522 rfid2(SS_PIN_2, RST_PIN);
 
 void setup() {
   Serial.begin(9600);
+  delay(1000);
   SPI.begin();
 
   // Initialize both RFID sensors
