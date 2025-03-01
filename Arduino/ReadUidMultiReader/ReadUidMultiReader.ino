@@ -77,10 +77,6 @@ void loop() {
       Serial.print(F(": Card UID:"));
       dump_byte_array(mfrc522[reader].uid.uidByte, mfrc522[reader].uid.size);
       Serial.println();
-      Serial.print(F("PICC type: "));
-      MFRC522::PICC_Type piccType = mfrc522[reader].PICC_GetType(mfrc522[reader].uid.sak);
-      Serial.println(mfrc522[reader].PICC_GetTypeName(piccType));
-
       // Halt PICC
       mfrc522[reader].PICC_HaltA();
       // Stop encryption on PCD

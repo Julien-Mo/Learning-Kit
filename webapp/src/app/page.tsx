@@ -7,6 +7,7 @@ export default function Home() {
         SoloSpell
         <a href="/dashboard">go to dashboard</a>
         <a href="/onboarding">go to onboarding</a>
+        <a href="/lesson/0">go to lesson with id 0</a>
         <a href="/lesson/1">go to lesson with id 1</a>
         <a href="/progress">go to progress</a>
         <a href="/settings">go to settings</a>
