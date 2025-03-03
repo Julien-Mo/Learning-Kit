@@ -7,19 +7,34 @@
         {
           "type": "introduction",
           "letter": "A",
-          "sound": "aaaaaaahhhhh",
+          "sound": "/ă/",
           "keyword": "Apple",
           "description": "Teach the letter 'A'. Present the letter, basic sound and keyword: 'A, Apple, \\a'"
         },
         {
-          "type": "activity",
-          "activityType": "writing",
-          "instructions": "Trace, then copy the letter. Then cover the letter and write it while saying the name, keyword and sound."
+          "type": "wordReading",
+          "title": "Read the word featuring the letter A",
+          "words": ["Bat"]
         },
         {
           "type": "wordReading",
-          "title": "Read these words featuring the letter A",
-          "words": ["Bat", "Mat", "Man", "Rat", "Had"]
+          "title": "Read the word featuring the letter A",
+          "words": ["Mat"]
+        },
+        {
+          "type": "wordReading",
+          "title": "Read the word featuring the letter A",
+          "words": ["Man"]
+        },
+        {
+          "type": "wordReading",
+          "title": "Read the word featuring the letter A",
+          "words": ["Rat"]
+        },
+        {
+          "type": "wordReading",
+          "title": "Read the word featuring the letter A",
+          "words": ["Had"]
         },
         {
           "type": "phraseReading",

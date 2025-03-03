@@ -4,7 +4,7 @@ import { ElevenLabsClient } from "elevenlabs";
 console.log(process.env.ELEVENLABS_API_KEY);
 // Initialize the ElevenLabs client
 const client = new ElevenLabsClient({
-  apiKey: "INSERT_API_KEY_HERE",
+  apiKey: "sk_3f31bd83481e1f87e5cd4e11cf0a074fb165ca09757b006a",
 });
 
 // Voice ID for Rachel voice
