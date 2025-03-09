@@ -32,10 +32,10 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-#define RST_PIN         5          // Configurable, see typical pin layout above
-#define SS_1_PIN        47         // Configurable, take a unused pin, only HIGH/LOW required, must be different to SS 2
-#define SS_2_PIN        53          // Configurable, take a unused pin, only HIGH/LOW required, must be different to SS 1
-#define SS_3_PIN        49          // Configurable, take a unused pin, only HIGH/LOW required, must be different to SS 1
+#define RST_PIN         5
+#define SS_1_PIN        47
+#define SS_2_PIN        53
+#define SS_3_PIN        49
 
 #define NR_OF_READERS   3
 
