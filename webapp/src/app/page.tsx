@@ -38,6 +38,17 @@ export default function SoloSpellProfessional() {
                 </div>
               </Link>
 
+              <Link href="/lesson/0">
+                <div className="relative group">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-200/50 transition-transform duration-200 group-hover:scale-105">
+                    <Star className="w-10 h-10 text-white" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-yellow-400 to-yellow-500 text-xs font-bold w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-md">
+                    ✓
+                  </div>
+                </div>
+              </Link>
+
               {[1, 2].map((_, i) => (
                 <div
                   key={i}
