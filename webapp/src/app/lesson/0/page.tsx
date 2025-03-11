@@ -7,31 +7,44 @@ import { Footer } from "@/components/layout/Footer";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 
 const questions = [
-  { question: "Where does 'C' go in cat?", correctUID: "92 C8 C5 01", correctReader: "0" },
-  { question: "Where does 'A' go in cat?", correctUID: "39 9A CD 01", correctReader: "0" },
-  { question: "Where does 'T' go in cat?", correctUID: "39 9A CD 01", correctReader: "1" },
+  {
+    question: "Where does 'C' go in cat?",
+    correctUID: "92 C8 C5 01",
+    correctReader: "0",
+  },
+  {
+    question: "Where does 'A' go in cat?",
+    correctUID: "39 9A CD 01",
+    correctReader: "0",
+  },
+  {
+    question: "Where does 'T' go in cat?",
+    correctUID: "39 9A CD 01",
+    correctReader: "1",
+  },
 ];
 
 export default function LessonPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [feedback, setFeedback] = useState({ message: "", isCorrect: false });
-  
+
   const currentQuestion = questions[currentQuestionIndex];
   const progress = (currentQuestionIndex / questions.length) * 100;
 
+  // @ts-ignore
   useEffect(() => {
     const socket = io("http://localhost:3001");
 
     socket.on("rfidData", ({ reader, uid }) => {
       if (feedback.isCorrect) return;
 
-      const isCorrect = 
-        uid === currentQuestion.correctUID && 
+      const isCorrect =
+        uid === currentQuestion.correctUID &&
         reader === currentQuestion.correctReader;
 
       setFeedback({
         message: isCorrect ? "✅ Correct!" : "❌ Incorrect! Try again.",
-        isCorrect
+        isCorrect,
       });
       playSound(isCorrect ? "correct" : "incorrect");
     });
@@ -62,7 +75,7 @@ export default function LessonPage() {
           </h2>
         </div>
       </div>
-      <Footer 
+      <Footer
         feedback={feedback.message}
         isCorrect={feedback.isCorrect}
         onNext={handleNext}

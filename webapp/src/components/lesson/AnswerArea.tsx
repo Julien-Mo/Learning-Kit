@@ -1,5 +1,5 @@
 import React from "react";
-import { Check, X } from "lucide-react";
+import { Check, X, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface AnswerAreaProps {
@@ -7,6 +7,7 @@ interface AnswerAreaProps {
   isCorrect: boolean | null;
   onCheck: () => void;
   onNext: () => void;
+  onRetry?: () => void;
   isCheckDisabled: boolean;
 }
 
@@ -15,6 +16,7 @@ export function AnswerArea({
   isCorrect,
   onCheck,
   onNext,
+  onRetry,
   isCheckDisabled,
 }: AnswerAreaProps) {
   return (
@@ -49,12 +51,23 @@ export function AnswerArea({
                 </div>
               )}
             </div>
-            <Button
-              className="h-14 rounded-full bg-blue-500 px-8 py-4 text-lg font-medium text-white shadow-md hover:bg-blue-600"
-              onClick={onNext}
-            >
-              Next
-            </Button>
+            <div className="flex gap-2">
+              {!isCorrect && onRetry && (
+                <Button
+                  className="h-14 rounded-full bg-amber-500 px-6 py-4 text-lg font-medium text-white shadow-md hover:bg-amber-600"
+                  onClick={onRetry}
+                >
+                  <RotateCcw className="mr-2 h-5 w-5" />
+                  Retry
+                </Button>
+              )}
+              <Button
+                className="h-14 rounded-full bg-blue-500 px-8 py-4 text-lg font-medium text-white shadow-md hover:bg-blue-600"
+                onClick={onNext}
+              >
+                Next
+              </Button>
+            </div>
           </div>
         )}
       </div>

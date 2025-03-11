@@ -24,6 +24,7 @@ export function PhraseReadingContent({
           className={`mb-2 flex h-16 w-16 items-center justify-center rounded-full ${
             isListening ? "bg-red-100" : "bg-blue-100"
           } shadow-md hover:${isListening ? "bg-red-200" : "bg-blue-200"}`}
+          aria-label={isListening ? "Stop recording" : "Start recording"}
         >
           {isListening ? (
             <StopCircle className="h-8 w-8 text-red-600" />

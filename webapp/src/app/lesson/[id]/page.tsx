@@ -1,17 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import {
-  playSound,
-  textToSpeech,
-  startMockRecording,
-  RecordingController,
-} from "@/lib/utils";
-import {
-  checkAnswerCorrectness,
-  isCheckDisabled,
-  getRandomItemFromArray,
-} from "@/lib/lesson-utils";
+import { playSound, textToSpeech, startRecording, transcribeAudio, RecordingController } from "@/lib/utils";
+import { checkAnswerCorrectness, isCheckDisabled, getRandomItemFromArray } from "@/lib/lesson-utils";
 import type { LessonsData } from "@/lib/types";
 
 // Components
@@ -90,35 +81,33 @@ export default function LessonPage() {
     if (isListening && recordingController) {
       recordingController.stopRecording();
       setIsListening(false);
+      
+      // Get the audio blob from the recording
+      const audioBlob = await recordingController.getAudioBlob();
       setRecordingController(null);
-
-      // Generate appropriate answer based on content type
-      if (currentContent?.type === "introduction") {
-        setUserAnswer(currentContent.keyword);
-      } else if (
-        currentContent?.type === "wordReading" &&
-        currentContent.words.length > 0
-      ) {
-        setUserAnswer(getRandomItemFromArray(currentContent.words) || "");
-      } else if (
-        currentContent?.type === "phraseReading" &&
-        currentContent.phrases.length > 0
-      ) {
-        setUserAnswer(getRandomItemFromArray(currentContent.phrases) || "");
-      } else if (
-        currentContent?.type === "sentenceReading" &&
-        currentContent.sentences.length > 0
-      ) {
-        setUserAnswer(getRandomItemFromArray(currentContent.sentences) || "");
+      
+      if (audioBlob) {
+        // Show loading state while transcribing
+        setUserAnswer("Transcribing...");
+        
+        // Transcribe the audio using our API
+        const transcription = await transcribeAudio(audioBlob);
+        
+        if (transcription.words.length > 0) {
+          // Use the transcribed text as the answer
+          setUserAnswer(transcription.text);
+        } else {
+          setUserAnswer("No speech detected. Please try again.");
+        }
       } else {
-        setUserAnswer("Recording completed");
+        setUserAnswer("Recording failed. Please try again.");
       }
     }
     // Start recording
     else {
       setIsListening(true);
       setUserAnswer("");
-      const controller = startMockRecording();
+      const controller = startRecording();
       setRecordingController(controller);
     }
   };
@@ -137,6 +126,17 @@ export default function LessonPage() {
     } else {
       // Lesson complete, redirect to summary or dashboard
       window.location.href = "/";
+    }
+  };
+
+  const handleRetry = () => {
+    // Reset the answer state
+    setIsCorrect(null);
+    setUserAnswer("");
+    
+    // If the content type requires listening first, reset that state too
+    if (currentContent?.type === "introduction" || currentContent?.type === "spelling") {
+      setHasListened(false);
     }
   };
 
@@ -179,6 +179,7 @@ export default function LessonPage() {
             isCorrect={isCorrect}
             onCheck={checkAnswer}
             onNext={handleNext}
+            onRetry={handleRetry}
             isCheckDisabled={isCheckDisabled(
               currentContent,
               hasListened,

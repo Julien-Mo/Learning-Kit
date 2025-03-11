@@ -34,32 +34,72 @@ export function playSound(soundType: "correct" | "incorrect") {
 export interface RecordingController {
   stopRecording: () => void;
   isRecording: boolean;
+  getAudioBlob: () => Promise<Blob | null>;
 }
 
 // Global recording controller
 let currentRecordingController: RecordingController | null = null;
 
-// Start mock recording and return a controller to stop it
-export function startMockRecording(): RecordingController {
+// Start actual recording and return a controller to stop it
+export function startRecording(): RecordingController {
   // If there's already a recording in progress, stop it
   if (currentRecordingController && currentRecordingController.isRecording) {
     currentRecordingController.stopRecording();
   }
 
-  // Create a new controller
-  let resolvePromise: (value: string) => void;
-  const recordingPromise = new Promise<string>((resolve) => {
-    resolvePromise = resolve;
+  let mediaRecorder: MediaRecorder | null = null;
+  let audioChunks: Blob[] = [];
+  let recordingBlob: Blob | null = null;
+
+  // Create a promise that will resolve when recording is stopped
+  let resolveRecording: (value: Blob | null) => void;
+  const recordingPromise = new Promise<Blob | null>((resolve) => {
+    resolveRecording = resolve;
   });
+
+  // Request microphone access
+  navigator.mediaDevices
+    .getUserMedia({ audio: true })
+    .then((stream) => {
+      mediaRecorder = new MediaRecorder(stream);
+
+      mediaRecorder.addEventListener("dataavailable", (event) => {
+        if (event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
+      });
+
+      mediaRecorder.addEventListener("stop", () => {
+        recordingBlob = new Blob(audioChunks, { type: "audio/webm" });
+        resolveRecording(recordingBlob);
+
+        // Stop all tracks in the stream to release the microphone
+        stream.getTracks().forEach((track) => track.stop());
+      });
+
+      // Start recording
+      mediaRecorder.start();
+    })
+    .catch((error) => {
+      console.error("Error accessing microphone:", error);
+      resolveRecording(null);
+    });
 
   const controller: RecordingController = {
     isRecording: true,
     stopRecording: () => {
-      if (controller.isRecording) {
+      if (
+        controller.isRecording &&
+        mediaRecorder &&
+        mediaRecorder.state !== "inactive"
+      ) {
         controller.isRecording = false;
-        resolvePromise("Recording completed");
+        mediaRecorder.stop();
         currentRecordingController = null;
       }
+    },
+    getAudioBlob: async () => {
+      return recordingBlob || (await recordingPromise);
     },
   };
 
@@ -69,23 +109,32 @@ export function startMockRecording(): RecordingController {
   return controller;
 }
 
-// Get the current recording promise
-export function getCurrentRecordingPromise(): Promise<string> | null {
-  if (!currentRecordingController || !currentRecordingController.isRecording) {
-    return null;
-  }
+// Transcribe audio using the Eleven Labs API
+export async function transcribeAudio(audioBlob: Blob): Promise<{ words: string[], text: string }> {
+  try {
+    // Create a FormData object to send the audio file
+    const formData = new FormData();
+    formData.append("audio", audioBlob, "recording.webm");
 
-  return new Promise<string>((resolve) => {
-    const checkInterval = setInterval(() => {
-      if (
-        !currentRecordingController ||
-        !currentRecordingController.isRecording
-      ) {
-        clearInterval(checkInterval);
-        resolve("Recording completed");
-      }
-    }, 100);
-  });
+    // Send the audio to our API route
+    const response = await fetch("/api/stt", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to transcribe audio");
+    }
+
+    const data = await response.json();
+    return {
+      words: data.words || [],
+      text: data.text || ""
+    };
+  } catch (error) {
+    console.error("Error transcribing audio:", error);
+    return { words: [], text: "" };
+  }
 }
 
 // Type declaration for the Speech Recognition API (kept for reference)
