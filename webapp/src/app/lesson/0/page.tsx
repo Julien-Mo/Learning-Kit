@@ -9,18 +9,18 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 const questions = [
   {
     question: "Where does 'C' go in cat?",
-    correctUID: "92 C8 C5 01",
-    correctReader: "0",
+    correctUID: "6F BD 99 C3",
+    correctReader: "2",
   },
   {
     question: "Where does 'A' go in cat?",
-    correctUID: "39 9A CD 01",
-    correctReader: "0",
+    correctUID: "8F 81 D5 C4",
+    correctReader: "1",
   },
   {
     question: "Where does 'T' go in cat?",
-    correctUID: "39 9A CD 01",
-    correctReader: "1",
+    correctUID: "5F 67 15 C3",
+    correctReader: "0",
   },
 ];
 
