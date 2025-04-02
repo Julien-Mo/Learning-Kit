@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
     const response = await client.speechToText.convert({
       file: audioFile,
       model_id: "scribe_v1",
+      language_code: "en",
     });
 
     return NextResponse.json({

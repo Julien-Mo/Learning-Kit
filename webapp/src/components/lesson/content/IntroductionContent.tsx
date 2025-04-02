@@ -32,7 +32,7 @@ export function IntroductionContent({
 
       <div className="mb-6 flex flex-col items-center">
         <button
-          onClick={() => onSpeakText(`${letter}. ${keyword}. ${sound}`)}
+          onClick={() => onSpeakText(`${keyword}.`)}
           className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 shadow-md hover:bg-blue-200"
         >
           <Volume2 className="h-8 w-8 text-blue-600" />

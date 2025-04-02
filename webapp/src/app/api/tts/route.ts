@@ -21,7 +21,6 @@ export async function POST(request: Request) {
       text,
       model_id: "eleven_multilingual_v2",
       output_format: "mp3_44100_128",
-      language_code: "en",
     });
 
     // Convert stream to buffer
