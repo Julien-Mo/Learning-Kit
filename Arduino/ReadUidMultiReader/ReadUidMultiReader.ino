@@ -33,13 +33,18 @@
 #include <MFRC522.h>
 
 #define RST_PIN         5
-#define SS_1_PIN        47
-#define SS_2_PIN        53
-#define SS_3_PIN        49
+#define SS_1_PIN        23
+#define SS_2_PIN        25
+#define SS_3_PIN        27
+#define RST_PIN_1 5
+#define RST_PIN_2 6
+#define RST_PIN_3 7
 
 #define NR_OF_READERS   3
 
 byte ssPins[] = {SS_1_PIN, SS_2_PIN, SS_3_PIN};
+byte rstPins[] = {RST_PIN_1, RST_PIN_2, RST_PIN_3};
+
 
 MFRC522 mfrc522[NR_OF_READERS];   // Create MFRC522 instance.
 
@@ -54,7 +59,7 @@ void setup() {
   SPI.begin();        // Init SPI bus
 
   for (uint8_t reader = 0; reader < NR_OF_READERS; reader++) {
-    mfrc522[reader].PCD_Init(ssPins[reader], RST_PIN); // Init each MFRC522 card
+    mfrc522[reader].PCD_Init(ssPins[reader], rstPins[reader]); // Init each MFRC522 card
     Serial.print(F("Reader "));
     Serial.print(reader);
     Serial.print(F(": "));
@@ -66,24 +71,33 @@ void setup() {
  * Main loop.
  */
 void loop() {
-
   for (uint8_t reader = 0; reader < NR_OF_READERS; reader++) {
-    // Look for new cards
-
+    // Deselect all readers
+    for (uint8_t i = 0; i < NR_OF_READERS; i++) {
+      digitalWrite(ssPins[i], HIGH);
+    }
+    
+    // Select the current reader by setting its SS pin LOW
+    digitalWrite(ssPins[reader], LOW);
+    
+    // Now perform the operations for this reader
     if (mfrc522[reader].PICC_IsNewCardPresent() && mfrc522[reader].PICC_ReadCardSerial()) {
       Serial.print(F("Reader "));
       Serial.print(reader);
-      // Show some details of the PICC (that is: the tag/card)
       Serial.print(F(": Card UID:"));
       dump_byte_array(mfrc522[reader].uid.uidByte, mfrc522[reader].uid.size);
       Serial.println();
-      // Halt PICC
+      
+      // Halt PICC and stop encryption on PCD
       mfrc522[reader].PICC_HaltA();
-      // Stop encryption on PCD
       mfrc522[reader].PCD_StopCrypto1();
-    } //if (mfrc522[reader].PICC_IsNewC
-  } //for(uint8_t reader
+    }
+    
+    // Deselect the current reader to free up the SPI bus
+    digitalWrite(ssPins[reader], HIGH);
+  }
 }
+
 
 /**
  * Helper routine to dump a byte array as hex values to Serial.
