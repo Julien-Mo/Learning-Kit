@@ -10,7 +10,7 @@ const questions = [
   {
     question: "Where does 'C' go in cat?",
     correctUID: "6F BD 99 C3",
-    correctReader: "2",
+    correctReader: "0",
   },
   {
     question: "Where does 'A' go in cat?",
@@ -20,7 +20,7 @@ const questions = [
   {
     question: "Where does 'T' go in cat?",
     correctUID: "5F 67 15 C3",
-    correctReader: "0",
+    correctReader: "2",
   },
 ];
 
